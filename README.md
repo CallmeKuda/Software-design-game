@@ -1,2 +1,2 @@
 # Software-design-game
-Hangman game to better understand NUST the stratigic plan
+Hangman game to better understand the NUST stratigic plan
