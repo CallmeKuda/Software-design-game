@@ -1,42 +1,39 @@
+
 <!DOCTYPE html>
 <html>
-<head>
-  <title>Hangman Game</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <!-- CSS files: (1) Reset and (2) Style -->
-  <link rel="stylesheet" type="text/css" href="assets/css/reset.css">
-  <link rel="stylesheet" type="text/css" href="assets/css/style.css">
-  <!-- External font -->
- <link href="https://fonts.googleapis.com/css?family=Roboto&display=swap" rel="stylesheet"> 
+  <head>
+    <title>NUST</title>
+    <meta charset="UTF-8" />
+    <link rel="stylesheet" type="text/css" href="assets/css/style.css">
+  </head>
 
-  <script src="https://code.jquery.com/jquery-3.0.0.min.js"></script> 
+  <body>
+    <div class="wrapper">
+      <h1>Hangman Game </h1>
+      <h2>Test yourself on your knowledge of the NUST stratigic plan</h2>
+      <p>
+        Use the alphabet below to guess the word, or click hint to get a clue.
+      </p>
+    </div>
 
-</head>
-<body>
-  <div class="container">
-    <section id="header">
-      <h1>Questions..</h1>
-    
-
-    </section>
-    <section id="main-panel"> 
-      <h1>Press Any Key To Start!</h1>
-      <p id="prompt"></p>
-      <p>Wins: <span id="win-count"></span></p>
-      <div id="current-word" class="letters"></div>
-      <p>Number of Guesses Remaining: <span id="guess-count"></span></p>
-      <p>Letters Already Guessed:</p>
-      <div id="failed-guesses" class="letters"></div>
-    </section>
-  </div> 
-
-  <audio id="wrong-letter" preload="true">
-	    <source src="assets/audio/Wrong-answer-sound-effect.mp3" type="audio/mp3">
-	</audio>
-	<audio id="correct-word" preload="true">
-	    <source src="assets/audio/BTS-Wings.mp3" type="audio/mp3">
-	</audio>
-  <!--  JavaScript file linked below -->
-  <script src="./assets/javascript/game.js" type="text/javascript"></script>
-</body>
+    <div class="wrapper">
+      <div class="alphabetButton" id="alphabetButtons"></div>
+      <p id="categoryName"></p>
+      <div id="hold"></div>
+      <p id="mylives"></p>
+      <p id="clue">Clue -</p>
+      <canvas id="stickman"
+        >This Text will show if the Browser does NOT support HTML5 Canvas
+        tag</canvas
+      >
+      <div class="container">
+        <button class="btn-2" id="hint">Hint</button>
+        <button class="btn-2" id="reset">Play again</button>
+      </div>
+      <form action="home.html">
+        <button class="btn-2" id="game1">Back</button>
+        </form>
+    </div>
+    <script src="./assets/javascript/game.js" type="text/javascript"></script>
+  </body>
 </html>

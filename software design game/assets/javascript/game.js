@@ -1,119 +1,256 @@
-// VARIABLES
-      // ==================================================================
-      // create variables needed for the game 
-      // Initial variable  
+ //const
+const container = document.getElementById("alphabetButtons");
+var answerDisplay = document.getElementById("hold");
+var answer = "";
+var hint = "";
+var life = 10;
+var wordDisplay = [];
+var winningCheck = "";
+const containerHint = document.getElementById("clue");
+const buttonHint = document.getElementById("hint");
+const buttonReset = document.getElementById("reset");
+const livesDisplay = document.getElementById("mylives");
+var myStickman = document.getElementById("stickman");
+var context = myStickman.getContext("2d");
 
-    var winCountElement = document.getElementById("win-count");
-    var currentWordElement = document.getElementById("current-word");
-    var guessCountElement = document.getElementById("guess-count");
-    var lettersGuessedElement = document.getElementById("failed-guesses");
-    var wrongLetterAudioElement = document.getElementById("wrong-letter");
-    var correctWordAudioElement = document.getElementById("correct-word");
+//generate alphabet button
+function generateButton() {
+  var buttonsHTML = "abcdefghijklmnopqrstuvwxyz"
+    .split("")
+    .map(
+      (letter) =>
+        `<button
+         class = "alphabetButtonJS" 
+         id="${letter}"
+         >
+        ${letter}
+        </button>`
+    )
+    .join("");
 
-    // Key words
-var wordsArray = [ "Kooky", "Shooky", "Mang", "Tata", "Koya", "RJ", "Chimmy", "Serendipty", "Singularity",
-"Epiphany", "Euphoria", "Dark and Wild", "Love Yourself", "Map of the Soul", "Persona", "Wings", "Boy With Luv",
-"Dream Glow", "A Brand New Day", "All Night", "Heartbeat", "Make It Right", "Jamais Vu", "Lights", "Dope", "Silver Spoon",
-"Young Forever", "Run", "Butterfly", "Come Back Home", "Ma City"
+  return buttonsHTML;
+}
+
+function handleClick(event) {
+  const isButton = event.target.nodeName === "BUTTON";
+  if (isButton) {
+    //console.dir(event.target.id);
+    //console.log(isButton);
+    const buttonId = document.getElementById(event.target.id);
+    buttonId.classList.add("selected");
+  }
+  return;
+}
+
+//word array
+const question = [
+  "NUST Strategic Plan"
 ];
 
-var randomWord = wordsArray[Math.floor(Math.random() * wordsArray.length)].toLowerCase();
-var allLettersGuessed = [];
-const maxAttempts = 9;
-var guessCount = 0;
-var guessesRemaining = maxAttempts - guessCount;
-var wordComplete = false;
-var winCount = 0;
-var prompt = "Press any key to get started!";
+const categories = [
+  [
+    "Vision",
+    "Mission",
+    "Values",
+    "Competitive advantage",
+    "Goals",
+    "Key Performance indicators",
+    
+  ]
+];
 
-function renderWord() {
-  var html = "";
-  for(var i = 0; i < randomWord.length; i++) {
-    if(allLettersGuessed.indexOf(randomWord[i]) !== -1 || randomWord[i] === " ") {
-      html += randomWord[i].toUpperCase();
+const hints = [
+  [
+    "A premier technological university known for knowledge creation innovation and entrepreneurship",
+    "An engaged and responsive university, meeting the needs of stakeholders through excellent education, applied research, innovation and service",
+    "INSTITUTIONAL AUTONOMY AND ACADEMIC FREEDOM is part of NUST's..........",
+    "Sound governance and management is the 7th.....",
+    "Building a vibrant and engaging learning environment is the 1st.....of the stratigic plan",
+    "Regularly evaluates our talent to ensure quality",
+  ]
+];
+
+//set question,answer and hint
+
+function setAnswer() {
+  const categoryOrder = Math.floor(Math.random() * categories.length);
+  const chosenCategory = categories[categoryOrder];
+  const wordOrder = Math.floor(Math.random() * chosenCategory.length);
+  const chosenWord = chosenCategory[wordOrder];
+
+  const categoryNameJS = document.getElementById("categoryName");
+  categoryNameJS.innerHTML = question[categoryOrder];
+
+  //console.log(chosenCategory);
+  //console.log(chosenWord);
+  answer = chosenWord;
+  hint = hints[categoryOrder][wordOrder];
+  answerDisplay.innerHTML = generateAnswerDisplay(chosenWord);
+}
+
+function generateAnswerDisplay(word) {
+  var wordArray = word.split("");
+  //console.log(wordArray);
+  for (var i = 0; i < answer.length; i++) {
+    if (wordArray[i] !== "-") {
+      wordDisplay.push("_");
     } else {
-      html += "_";
+      wordDisplay.push("-");
     }
   }
-  currentWordElement.innerHTML = html;
-};
+  return wordDisplay.join(" ");
+}
 
-function clearWordAndGuesses() {
-  guessCountElement.innerHTML = maxAttempts;
-  guessCount = 0;
-  guessesRemaining = maxAttempts - guessCount;
-  allLettersGuessed = [];
-  lettersGuessedElement.innerHTML = "";
-};
+function showHint() {
+  containerHint.innerHTML = `Clue - ${hint}`;
+}
 
-$(document).ready(function() {
-  $('#prompt').typeIt({
-       strings: prompt,
-       speed: 30,
-       autoStart: false
-  });
+buttonHint.addEventListener("click", showHint);
+//setting initial condition
+function init() {
+  answer = "";
+  hint = "";
+  life = 10;
+  wordDisplay = [];
+  winningCheck = "";
+  context.clearRect(0, 0, 400, 400);
+  canvas();
+  containerHint.innerHTML = `Clue -`;
+  livesDisplay.innerHTML = `You have ${life} lives!`;
+  setAnswer();
+  container.innerHTML = generateButton();
+  container.addEventListener("click", handleClick);
+  console.log(answer);
+  //console.log(hint);
+}
 
-  $("#bio").hide();
-  $("#bio").fadeIn(1500);
-});
+window.onload = init();
 
+//reset (play again)
+buttonReset.addEventListener("click", init);
 
-renderWord();
-winCountElement.innerHTML = winCount;
-guessCountElement.innerHTML = guessesRemaining;
-
-document.onkeydown = function(e) {
-  var theKey = e.key.toLowerCase();
-  var theKeyCode = e.keyCode;
-
-  if(theKeyCode >= 65 && theKeyCode <= 90 && allLettersGuessed.indexOf(theKey) === -1){
-    allLettersGuessed.push(theKey);
-
-    if(randomWord.indexOf(theKey) === -1) {
-      guessCount++;
-      correctWordAudioElement.currentTime = 0;
-      correctWordAudioElement.pause();
-      wrongLetterAudioElement.currentTime = 0;
-      wrongLetterAudioElement.play();
-    };
-
-    guessesRemaining = maxAttempts - guessCount;
-
-    if(guessesRemaining === 0) {
-      clearWordAndGuesses();
-      randomWord = wordsArray[Math.floor(Math.random() * wordsArray.length)].toLowerCase();
+//guess click
+function guess(event) {
+  const guessWord = event.target.id;
+  const answerArray = answer.split("");
+  var counter = 0;
+  if (answer === winningCheck) {
+    livesDisplay.innerHTML = `YOU WIN!`;
+    return;
+  } else {
+    if (life > 0) {
+      for (var j = 0; j < answer.length; j++) {
+        if (guessWord === answerArray[j]) {
+          wordDisplay[j] = guessWord;
+          console.log(guessWord);
+          answerDisplay.innerHTML = wordDisplay.join(" ");
+          winningCheck = wordDisplay.join("");
+          //console.log(winningCheck)
+          counter += 1;
+        }
+      }
+      if (counter === 0) {
+        life -= 1;
+        counter = 0;
+        animate();
+      } else {
+        counter = 0;
+      }
+      if (life > 1) {
+        livesDisplay.innerHTML = `You have ${life} lives!`;
+      } else if (life === 1) {
+        livesDisplay.innerHTML = `You have ${life} life!`;
+      } else {
+        livesDisplay.innerHTML = `GAME OVER!`;
+      }
     } else {
-      guessCountElement.innerHTML = guessesRemaining;
-    };
-
-    var html = "";
-    for(var i = 0; i < allLettersGuessed.length; i++) {
-      if(randomWord.indexOf(allLettersGuessed[i]) === -1) {
-        html += allLettersGuessed[i].toUpperCase();
-      } 
+      return;
     }
-    lettersGuessedElement.innerHTML = html;
-
-    renderWord();
-
-    var renderedWord = document.getElementById("current-word").innerHTML;
-    if(renderedWord.indexOf("_") === -1) {
-      wordComplete = true;
+    console.log(wordDisplay);
+    //console.log(counter);
+    //console.log(life);
+    if (answer === winningCheck) {
+      livesDisplay.innerHTML = `YOU WIN!`;
+      return;
     }
-  };
-
-  if(wordComplete) {
-    correctWordAudioElement.currentTime = 0;
-    correctWordAudioElement.play();
-    wordComplete = false;
-    winCount++;
-    winCountElement.innerHTML = winCount;
-    clearWordAndGuesses();
-    randomWord = wordsArray[Math.floor(Math.random() * wordsArray.length)].toLowerCase();
-    renderWord();
   }
-};
+}
 
+container.addEventListener("click", guess);
 
+// Hangman
+function animate() {
+  drawArray[life]();
+  //console.log(drawArray[life]);
+}
 
+function canvas() {
+  myStickman = document.getElementById("stickman");
+  context = myStickman.getContext("2d");
+  context.beginPath();
+  context.strokeStyle = "#fff";
+  context.lineWidth = 2;
+}
 
+function head() {
+  myStickman = document.getElementById("stickman");
+  context = myStickman.getContext("2d");
+  context.beginPath();
+  context.arc(60, 25, 10, 0, Math.PI * 2, true);
+  context.stroke();
+}
+
+function draw($pathFromx, $pathFromy, $pathTox, $pathToy) {
+  context.moveTo($pathFromx, $pathFromy);
+  context.lineTo($pathTox, $pathToy);
+  context.stroke();
+}
+
+function frame1() {
+  draw(0, 150, 150, 150);
+}
+
+function frame2() {
+  draw(10, 0, 10, 600);
+}
+
+function frame3() {
+  draw(0, 5, 70, 5);
+}
+
+function frame4() {
+  draw(60, 5, 60, 15);
+}
+
+function torso() {
+  draw(60, 36, 60, 70);
+}
+
+function rightArm() {
+  draw(60, 46, 100, 50);
+}
+
+function leftArm() {
+  draw(60, 46, 20, 50);
+}
+
+function rightLeg() {
+  draw(60, 70, 100, 100);
+}
+
+function leftLeg() {
+  draw(60, 70, 20, 100);
+}
+
+var drawArray = [
+  rightLeg,
+  leftLeg,
+  rightArm,
+  leftArm,
+  torso,
+  head,
+  frame4,
+  frame3,
+  frame2,
+  frame1
+];
